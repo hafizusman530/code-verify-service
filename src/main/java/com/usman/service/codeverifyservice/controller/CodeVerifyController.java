@@ -1,11 +1,12 @@
 package com.usman.service.codeverifyservice.controller;
 
+import com.usman.service.codeverifyservice.model.User;
 import com.usman.service.codeverifyservice.repository.CodeVerify;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.annotation.AliasFor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/verification-code")
@@ -18,13 +19,15 @@ public class CodeVerifyController {
         this.codeVerify = codeVerify;
     }
 
-    @RequestMapping(path = "/{user_id}", method = RequestMethod.POST, consumes = "application/json")
-    public String code(@PathVariable String userId) {
-        return "";
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ResponseEntity<String> add(@RequestBody User user) {
+        codeVerify.add(user.getUserId());
+        return new ResponseEntity<>("successful", HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/{user_id}/{code}", method = RequestMethod.POST, consumes = "application/json")
-    public String verify(@PathVariable String userId, @PathVariable String code) {
-        return "";
+    @RequestMapping(path = "/{userId}/{code}", method = RequestMethod.GET)
+    public ResponseEntity<String> verify(@PathVariable("userId") String userId, @PathVariable("code") String code) {
+        boolean isCodeVerified = codeVerify.verify(userId, code);
+        return new ResponseEntity<>(isCodeVerified ? "true" : "false", HttpStatus.OK);
     }
 }

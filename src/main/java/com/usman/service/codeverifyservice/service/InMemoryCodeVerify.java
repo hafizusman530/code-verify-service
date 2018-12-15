@@ -6,12 +6,15 @@ import com.usman.service.codeverifyservice.exception.UserAlreadyExistException;
 import com.usman.service.codeverifyservice.exception.UserNotExistException;
 import com.usman.service.codeverifyservice.model.User;
 import com.usman.service.codeverifyservice.repository.CodeVerify;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
 public class InMemoryCodeVerify implements CodeVerify {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryCodeVerify.class);
     private static Map<String, User> userCodeMap = new HashMap<>();
     private static List<User> userList = new ArrayList<>();
 
@@ -25,7 +28,7 @@ public class InMemoryCodeVerify implements CodeVerify {
     @Override
     public boolean verify(String code, String userId) {
         if (!isAlreadyUserExist(userId)) {
-            throw new UserNotExistException();
+            throw new UserNotExistException(userId);
         }
         return userCodeMap.get(code)
                 .getUserId()
@@ -35,8 +38,9 @@ public class InMemoryCodeVerify implements CodeVerify {
     private void addUser(String userId) {
         String token = RandomStringUtil.
                 generateRandomCode(Constants.CODE_LENGTH);
+        LOGGER.info("token" + token);
         if (userCodeMap.get(token) != null) {
-            throw new UserAlreadyExistException();
+            throw new UserAlreadyExistException(userId);
         }
         User user = new User(userId, token);
         userList.add(user);
