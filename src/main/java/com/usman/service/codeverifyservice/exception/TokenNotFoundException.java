@@ -2,8 +2,9 @@ package com.usman.service.codeverifyservice.exception;
 
 import com.usman.service.codeverifyservice.response.ApiResponse;
 
-public class UserAlreadyExistException extends RuntimeException {
+public class TokenNotFoundException extends RuntimeException {
     private ApiResponse apiResponse;
+
     public ApiResponse getApiResponse() {
         return apiResponse;
     }
@@ -11,10 +12,15 @@ public class UserAlreadyExistException extends RuntimeException {
     public void setApiResponse(ApiResponse apiResponse) {
         this.apiResponse = apiResponse;
     }
-    public UserAlreadyExistException(String exception){
+
+    public TokenNotFoundException() {
+    }
+
+    public TokenNotFoundException(String exception) {
         super(exception);
     }
-    public UserAlreadyExistException(ApiResponse apiResponse) {
+
+    public TokenNotFoundException(ApiResponse apiResponse) {
         super("");
         this.apiResponse = apiResponse;
     }

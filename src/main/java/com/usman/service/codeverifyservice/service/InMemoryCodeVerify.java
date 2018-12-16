@@ -2,10 +2,12 @@ package com.usman.service.codeverifyservice.service;
 
 import com.usman.service.codeverifyservice.common.Constants;
 import com.usman.service.codeverifyservice.common.RandomStringUtil;
+import com.usman.service.codeverifyservice.exception.TokenNotFoundException;
 import com.usman.service.codeverifyservice.exception.UserAlreadyExistException;
 import com.usman.service.codeverifyservice.exception.UserNotExistException;
 import com.usman.service.codeverifyservice.model.User;
 import com.usman.service.codeverifyservice.repository.CodeVerify;
+import com.usman.service.codeverifyservice.response.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,27 +22,29 @@ public class InMemoryCodeVerify implements CodeVerify {
 
     @Override
     public void add(String userId) {
-        if (!isAlreadyUserExist(userId)) {
-            addUser(userId);
+        if (isAlreadyUserExist(userId)) {
+            throw new UserAlreadyExistException(new ApiResponse("0", "error", null));
         }
+        addUser(userId);
+
     }
 
     @Override
-    public boolean verify(String code, String userId) {
+    public boolean verify(String userId, String code) {
         if (!isAlreadyUserExist(userId)) {
-            throw new UserNotExistException(userId);
+            throw new UserNotExistException(new ApiResponse("0", "error", null));
         }
-        return userCodeMap.get(code)
-                .getUserId()
-                .equals(userId);
+        Optional<User> user = Optional.ofNullable(userCodeMap.get(code));
+        return user.orElseThrow(() -> new TokenNotFoundException(new ApiResponse("0", null, "false")))
+                .getUserId().equals(userId);
     }
 
     private void addUser(String userId) {
         String token = RandomStringUtil.
                 generateRandomCode(Constants.CODE_LENGTH);
-        LOGGER.info("token" + token);
+        LOGGER.info("token " + token);
         if (userCodeMap.get(token) != null) {
-            throw new UserAlreadyExistException(userId);
+            throw new UserAlreadyExistException(new ApiResponse("0", "error", null));
         }
         User user = new User(userId, token);
         userList.add(user);

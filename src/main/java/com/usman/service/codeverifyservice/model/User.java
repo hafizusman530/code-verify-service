@@ -1,7 +1,14 @@
 package com.usman.service.codeverifyservice.model;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class User {
+
+    @NotNull
+    @Size(min = 1)
     private String userId;
+
     private String code;
 
     public User() {
