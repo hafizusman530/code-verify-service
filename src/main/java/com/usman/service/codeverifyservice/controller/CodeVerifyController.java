@@ -23,12 +23,12 @@ public class CodeVerifyController {
     @PostMapping(path = "/{userId}")
     public ResponseEntity<Object> add(@PathVariable("userId") String userId) {
         codeVerify.add(userId);
-        return new ResponseEntity<>(new ApiResponse("1", "successful", null), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("1", "successful", null), HttpStatus.CREATED);
     }
 
     @RequestMapping(path = "/{userId}/{code}", method = RequestMethod.GET)
     public ResponseEntity<Object> verify(@PathVariable("userId") String userId, @PathVariable("code") String code) {
         codeVerify.verify(userId, code);
-        return new ResponseEntity<>(new ApiResponse("1", null, "true"), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("1", null, "true"), HttpStatus.FOUND);
     }
 }
