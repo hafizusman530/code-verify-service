@@ -21,12 +21,11 @@ public class InMemoryCodeVerify implements CodeVerify {
     private static List<User> userList = new ArrayList<>();
 
     @Override
-    public void add(String userId) {
+    public String generateToken(String userId) {
         if (isAlreadyUserExist(userId)) {
             throw new UserAlreadyExistException(new ApiResponse("0", "error", null));
         }
-        addUser(userId);
-
+        return getToken(userId);
     }
 
     @Override
@@ -39,16 +38,16 @@ public class InMemoryCodeVerify implements CodeVerify {
                 .getUserId().equals(userId);
     }
 
-    private void addUser(String userId) {
+    private String getToken(String userId) {
         String token = RandomStringUtil.
                 generateRandomCode(Constants.CODE_LENGTH);
-        LOGGER.info("token " + token);
         if (userCodeMap.get(token) != null) {
             throw new UserAlreadyExistException(new ApiResponse("0", "error", null));
         }
         User user = new User(userId, token);
         userList.add(user);
         userCodeMap.put(token, user);
+        return token;
     }
 
     private boolean isAlreadyUserExist(String userId) {

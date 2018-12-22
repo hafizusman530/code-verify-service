@@ -1,6 +1,6 @@
 package com.usman.service.codeverifyservice.repository;
 
 public interface CodeVerify {
-    void add(String userId);
+    String generateToken(String userId);
     boolean verify (String code, String userId);
 }
