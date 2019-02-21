@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!--using application properties file-->
+    <property resource="application.properties"/>
+
+    <!--logging settings for console-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!--logging settings for log file, path is provided in application.properties-->
+    <appender name="file_save" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_FILE}</file>
+        <append>true</append>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <!--logging scope with logging appender-->
+    <logger name="com.cc.admin" additivity="false" level="info">
+        <appender-ref ref="console"/>
+        <appender-ref ref="file_save"/>
+    </logger>
+
+    <!--logging settings for all profiles-->
+    <root level="info">
+        <appender-ref ref="console"/>
+        <appender-ref ref="file_save"/>
+    </root>
+
+    <!--logging settings for dev profile, please enable specific profile in application.properties
+    make sure relative profile exist under resources/ as application-dev.properties.           -->
+    <springProfile name="dev">
+        <root level="info">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file_save"/>
+        </root>
+        <logger name="com.cc.admin" additivity="false" level="debug">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file_save"/>
+        </logger>
+    </springProfile>
+
+    <!--logging settings for prod profile, please enable specific profile in application.properties
+    make sure relative profile exist under resources/ as application-prod.properties.           -->
+    <springProfile name="prod">
+        <root level="info">
+            <appender-ref ref="file_save"/>
+        </root>
+        <logger name="com.cc.admin" additivity="false" level="error">
+            <appender-ref ref="file_save"/>
+        </logger>
+    </springProfile>
+
+</configuration>
